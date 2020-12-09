@@ -57,7 +57,7 @@ args = parser.parse_args()
 tf.set_random_seed(args.seed)
 
 args.neg_size = 1
-
+# 数据集处理
 train_set, val_set, train_val_set, test_set, data_time, neg_test, num_items, num_users = Dataset.data_partition_neg(args)
 
 
