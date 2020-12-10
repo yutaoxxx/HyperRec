@@ -28,7 +28,7 @@ def data_partition_neg(args):
     user_valid_time = {}
     user_train_valid_time = {}
     user_test_time = {}
-    # assume user/item index starting from 1
+    # user和item的idex是从1开始的
     path_to_data = data_path + args.data + '/' + args.data + '_all.txt'
 
     # for Amazon    
@@ -41,24 +41,26 @@ def data_partition_neg(args):
     f = open(path_to_data, 'r')
     for line in f:
         u, i, t, d = line.rstrip().split('\t')
-        u = int(u)
-        i = int(i)
+        u = int(u) # userid
+        i = int(i) # item id
         year = int(datetime.datetime.fromtimestamp(int(t)).strftime("%Y")) # Day of the year as a decimal number [001,366]
         month = int(datetime.datetime.fromtimestamp(int(t)).strftime("%m"))
 
         
-        usernum = max(u, usernum)
-        itemnum = max(i, itemnum)
-        User[u].append(i)   
-
+        usernum = max(u, usernum) # 多少user
+        itemnum = max(i, itemnum) # 多少item
+        User[u].append(i)   # User:[item1, item2,...]
+        
+        # 1表示2008年以前，2表示2009年上半年，3表示2009年下半年，，，
         temp_map = t_map[year]
-        if len(temp_map) == 1:
-            User_time[u].append(temp_map[0])
+        if len(temp_map) == 1:  # 
+            User_time[u].append(temp_map[0])  # User:[1]
         else:
-            User_time[u].append(temp_map[m_map[month]]) 
+            User_time[u].append(temp_map[m_map[month]]) # 半年一个时间段 
 
 
     for user in User:
+        # 用户和多少item有联系
         nfeedback = len(User[user])
         if nfeedback < 3:
             user_train[user] = User[user]
@@ -69,11 +71,11 @@ def data_partition_neg(args):
             user_valid_time[user] = []
             user_test_time[user] = []
         else:
-            user_train[user] = User[user][:-2]
+            user_train[user] = User[user][:-2] # 0到倒数第二个
             user_valid[user] = []
-            user_valid[user].append(User[user][-2])
+            user_valid[user].append(User[user][-2]) # 倒数第二个
             user_test[user] = []
-            user_test[user].append(User[user][-1])
+            user_test[user].append(User[user][-1]) # 最后一个
             
             neg_test[user] = [User[user][-1]]
 
